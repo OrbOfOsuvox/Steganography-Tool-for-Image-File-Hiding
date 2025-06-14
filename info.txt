@@ -1,0 +1,130 @@
+🧩 Key Components 		Overview
+Component			Description
+app.py				Main GUI built with Tkinter/TkinterDnD2 — handles user interaction.
+embed.py			Embeds text or encrypted messages into image using LSB technique.
+extract.py			Extracts and decrypts messages hidden inside images.
+encryption.py			Handles key derivation from password and Fernet encryption/decryption.
+V2_test_steganography.py	Script to automate and test embedding/extraction pipeline.
+images/ or samples/		Stores input/output images used for hiding messages.
+
+🖼️ 1. app.py — Graphical User Interface
+Purpose: User-friendly interface to drop images, write secret messages, and trigger hide/extract actions.
+
+Core UI Features:
+Drag & Drop image loading via TkinterDnD2
+
+Add Image button with metadata display (size, resolution, name)
+
+Text Box to input secret message
+
+Encryption Prompt (optional)
+
+Save Image & Extract Message buttons
+
+Live Status Bar for logs
+
+Image preview and clearing functionality
+
+UX Improvements:
+JPEG → PNG auto-conversion to prevent LSB corruption.
+
+Output file auto-renaming with timestamp.
+
+Hidden message preview upon successful embed (testing).
+
+File cleanup, clear/reset functions.
+
+🧬 2. embed.py — LSB Encoding + Encryption Support
+Functionality:
+
+Converts secret message (plain or encrypted) to bits.
+
+Modifies image pixels’ least significant bits (LSB) to hide data.
+
+Applies np.clip() and astype(np.uint8) for safe pixel handling.
+
+Auto-detects overflow and errors in pixel embedding.
+
+Key Features:
+Prefixing messages with TXT:: or ENC:: to identify type.
+
+Message padded with null terminator (0 byte).
+
+Can embed any valid UTF-8 message.
+
+Saves the new stego image to a given output path.
+
+🔍 3. extract.py — Message Decoding & Decryption
+Functionality:
+
+Reads pixel values from image.
+
+Extracts LSBs and reconstructs byte stream.
+
+Validates prefix (TXT:: or ENC::).
+
+If encrypted, uses Fernet + password-derived key to decrypt.
+
+Returns extracted plain text message.
+
+Key Features:
+Robust error handling: invalid format, decoding issues, missing keys.
+
+UTF-8 decode with null-byte termination for clean parsing.
+
+Raises clear errors for unknown/corrupt data.
+
+🔐 4. encryption.py — Password-Based Key Derivation
+Functionality:
+
+Uses PBKDF2HMAC to derive secure 32-byte encryption key from a password.
+
+Generates Fernet-compatible base64 key.
+
+Uses static salt (can be made dynamic for advanced features).
+
+Libraries Used:
+cryptography.hazmat.primitives.kdf.pbkdf2
+
+cryptography.fernet
+
+base64
+
+🧪 5. V2_test_steganography.py — Testing Script
+Functionality:
+
+Tests the embedding and extraction pipeline for both encrypted and non-encrypted flows.
+
+Runs assertions and prints outcomes.
+
+Validates correctness of messages and pixel-level encoding.
+
+Can be expanded into a unittest module.
+
+🗃️ 6. Data/Assets Directory (e.g., /samples)
+Used to store:
+
+Original test images (input.png, original.jpg)
+
+Output stego images (stego_output.png)
+
+Extracted message logs (optional)
+
+⚙️ Technical Highlights
+Feature				Implementation Detail
+LSB Technique	Encodes 	1 bit per RGB channel pixel (3 bits per pixel)
+JPEG → PNG conversion		Prevents data loss from JPEG lossy compression
+Fernet Encryption		AES-128 in CBC with HMAC for integrity
+UI + DND Support		Clean GUI layout with drag-and-drop via TkinterDnD2
+Error-resilient Embedding	Uses np.clip, proper reshaping, and null-byte detection
+Prefix Detection		Differentiates ENC:: vs TXT:: for extraction logic
+Status & Logging		Visual feedback, terminal logs, error boxes
+
+🧱 Optional Extensions You Can Add
+Feature				Description
+Embed entire files (PDF/ZIP)	Encode file data instead of just text
+Dynamic Salt			Embed salt with image for stronger encryption
+QR Code Output			Generate QR of extracted message
+History Log			Store history of embedded/extracted messages
+Mobile UI (Kivy/PyQt)		Turn into mobile-friendly app
+Metadata Hiding (EXIF)		Hide keys or hints in EXIF metadata

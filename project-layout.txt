@@ -1,0 +1,13 @@
+# steganography_tool/
+# ├── main.py
+# ├── stegano/
+# │   ├── __init__.py
+# │   ├── embed.py			# Hide text in image
+# │   └── extract.py		# Extract text from image
+# ├── gui/
+# │   ├── __init__.py
+# │   └── app.py
+# ├── utils/
+# │   ├── __init__.py
+# │   └── helpers.py
+# └── assets/
